@@ -19,8 +19,8 @@ package classification
  */
 
 import (
+	"bytes"
 	"container/heap"
-	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -32,7 +32,7 @@ import (
 // ClassifierAPI is the interface for a classifier
 type ClassifierAPI interface {
 	// Classify attempts to classify the provided log line
-	Classify(log string) (*ClassifierResult, error)
+	Classify(log []byte) (*ClassifierResult, error)
 	// aggregate stats
 	Stats() *ClassifierStats
 	// per-parser stats, map of LogType -> stats
@@ -77,14 +77,14 @@ func (c *Classifier) ParserStats() map[string]*ParserStats {
 }
 
 // catch panics from parsers, log and continue
-func safeLogParse(logType string, parser parsers.Interface, log string) (results []*parsers.Result, err error) {
+func safeLogParse(logType string, parser parsers.Interface, log []byte) (results []*parsers.Result, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.Errorf("parser %q panic: %v", logType, r)
 			results = nil
 		}
 	}()
-	results, err = parser.ParseLog(log)
+	results, err = parser.ParseLog(string(log))
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func safeLogParse(logType string, parser parsers.Interface, log string) (results
 }
 
 // Classify attempts to classify the provided log line
-func (c *Classifier) Classify(log string) (*ClassifierResult, error) {
+func (c *Classifier) Classify(log []byte) (*ClassifierResult, error) {
 	startClassify := time.Now().UTC()
 	// Slice containing the popped queue items
 	var popped []interface{}
@@ -115,7 +115,7 @@ func (c *Classifier) Classify(log string) (*ClassifierResult, error) {
 		}
 	}()
 
-	log = strings.TrimSpace(log) // often the last line has \n only, could happen mid file tho
+	log = bytes.TrimSpace(log) // often the last line has \n only, could happen mid file tho
 
 	if len(log) == 0 { // we count above (because it is a line in the file) then skip
 		return result, nil

@@ -19,7 +19,7 @@ package sources
  */
 
 import (
-	"strings"
+	"bytes"
 
 	"github.com/pkg/errors"
 
@@ -39,14 +39,14 @@ type SQSClassifier struct {
 
 var _ classification.ClassifierAPI = (*SQSClassifier)(nil)
 
-func (c *SQSClassifier) Classify(log string) (*classification.ClassifierResult, error) {
-	log = strings.TrimSpace(log)
+func (c *SQSClassifier) Classify(log []byte) (*classification.ClassifierResult, error) {
+	log = bytes.TrimSpace(log)
 	if len(log) == 0 {
 		c.stats.LogLineCount++
 		return &classification.ClassifierResult{}, nil
 	}
 	msg := forwarder.Message{}
-	err := pantherlog.ConfigJSON().UnmarshalFromString(log, &msg)
+	err := pantherlog.ConfigJSON().Unmarshal(log, &msg)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to parse JSON message")
 	}

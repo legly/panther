@@ -72,7 +72,7 @@ func TestSQSClassifier(t *testing.T) {
 			return nil, errors.New("source not found")
 		},
 	}
-	result, err := c.Classify(logData)
+	result, err := c.Classify([]byte(logData))
 	require.NoError(t, err)
 	require.NotNil(t, result)
 }

@@ -73,8 +73,8 @@ func main() {
 	numLines := 0
 	numEvents := 0
 	for lines.Scan() {
-		line := lines.Text()
-		if line == "" {
+		line := lines.Bytes()
+		if len(line) == 0 {
 			debugLog.Printf("Empty line %d\n", numLines)
 			continue
 		}

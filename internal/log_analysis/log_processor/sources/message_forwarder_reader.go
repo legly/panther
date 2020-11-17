@@ -57,7 +57,7 @@ func (r *MessageForwarderReader) fill() error {
 	if err := r.dec.Decode(&event); err != nil {
 		return err
 	}
-	if _, err := r.buffer.WriteString(event.Payload + "\n"); err != nil {
+	if _, err := r.buffer.Write(append(event.Payload, '\n')); err != nil {
 		return err
 	}
 	return nil

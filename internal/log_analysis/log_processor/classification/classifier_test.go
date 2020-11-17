@@ -88,7 +88,7 @@ func TestClassifyRespectsPriorityOfParsers(t *testing.T) {
 	}
 
 	for i := 0; i < repetitions; i++ {
-		result, err := classifier.Classify(logLine)
+		result, err := classifier.Classify([]byte(logLine))
 		if i == 0 {
 			// Maps are not ordered, we do not know if first result can miss
 			result.NumMiss = 0
@@ -128,7 +128,7 @@ func TestClassifyNoMatch(t *testing.T) {
 		ClassificationFailureCount:  1,
 	}
 
-	result, err := classifier.Classify(logLine)
+	result, err := classifier.Classify([]byte(logLine))
 	require.Error(t, err)
 
 	// skipping specifically validating the times
@@ -165,7 +165,7 @@ func TestClassifyParserPanic(t *testing.T) {
 		ClassificationFailureCount:  1,
 	}
 
-	result, err := classifier.Classify(logLine)
+	result, err := classifier.Classify([]byte(logLine))
 	require.Error(t, err)
 
 	// skipping specifically validating the times
@@ -193,7 +193,7 @@ func TestClassifyParserReturningEmptyResults(t *testing.T) {
 		ClassificationFailureCount:  0,
 	}
 
-	result, err := classifier.Classify(logLine)
+	result, err := classifier.Classify([]byte(logLine))
 	require.NoError(t, err)
 
 	// skipping specifically validating the times
@@ -246,7 +246,7 @@ func testSkipClassify(logLine string, t *testing.T) {
 	}
 
 	for i := 0; i < repetitions; i++ {
-		result, err := classifier.Classify(logLine)
+		result, err := classifier.Classify([]byte(logLine))
 		require.NoError(t, err)
 		require.Equal(t, expectedResult, result)
 	}

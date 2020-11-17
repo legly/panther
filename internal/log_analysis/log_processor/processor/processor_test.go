@@ -464,7 +464,7 @@ type testClassifier struct {
 	mock.Mock
 }
 
-func (c *testClassifier) Classify(log string) (*classification.ClassifierResult, error) {
+func (c *testClassifier) Classify(log []byte) (*classification.ClassifierResult, error) {
 	args := c.Called(log)
 	return args.Get(0).(*classification.ClassifierResult), args.Error(1)
 }

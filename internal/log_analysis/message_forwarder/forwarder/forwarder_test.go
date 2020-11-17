@@ -104,11 +104,11 @@ func TestShouldSendBatchRequest(t *testing.T) {
 
 	expectedForwarderMessages := []Message{
 		{
-			Payload:             "payload1",
+			Payload:             []byte("payload1"),
 			SourceIntegrationID: "45c378a7-2e36-4b12-8e16-2d3c49ff1371",
 		},
 		{
-			Payload:             "payload2",
+			Payload:             []byte("payload2"),
 			SourceIntegrationID: "45c378a7-2e36-4b12-8e16-2d3c49ff1372",
 		},
 	}
@@ -166,7 +166,7 @@ func TestShouldSkipMessagesNotRelatedToSource(t *testing.T) {
 		}, nil)
 
 	expectedForwarderMessage := Message{
-		Payload:             "payload1",
+		Payload:             []byte("payload1"),
 		SourceIntegrationID: "45c378a7-2e36-4b12-8e16-2d3c49ff1371",
 	}
 

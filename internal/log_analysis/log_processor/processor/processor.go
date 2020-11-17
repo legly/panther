@@ -162,8 +162,8 @@ func (p *Processor) run(outputChan chan<- *parsers.Result) error {
 	// bufio.NewScanner has a max buffer size which we might hit as we read bigger log lines
 	stream := bufio.NewReader(p.input.Reader)
 	for {
-		var line string
-		line, err = stream.ReadString(common.EventDelimiter)
+		var line []byte
+		line, err = stream.ReadBytes(common.EventDelimiter)
 		if err != nil {
 			if err == io.EOF {
 				err = nil
@@ -180,7 +180,7 @@ func (p *Processor) run(outputChan chan<- *parsers.Result) error {
 	return err
 }
 
-func (p *Processor) processLogLine(line string, outputChan chan<- *parsers.Result) {
+func (p *Processor) processLogLine(line []byte, outputChan chan<- *parsers.Result) {
 	result, err := p.classifier.Classify(line)
 	// A classifier returns an error when it cannot classify a non-empty log line
 	if err != nil {

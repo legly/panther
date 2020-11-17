@@ -41,7 +41,7 @@ import (
 )
 
 type Message struct {
-	Payload             string `json:"payload" validate:"required,min=1"`
+	Payload             []byte `json:"payload" validate:"required,min=1"`
 	SourceIntegrationID string `json:"sourceId" validate:"required,uuid4"`
 }
 
@@ -75,7 +75,7 @@ func Handle(ctx context.Context, event *events.SQSEvent) error {
 		}
 
 		message := Message{
-			Payload:             record.Body,
+			Payload:             []byte(record.Body),
 			SourceIntegrationID: integrationID,
 		}
 		data, err := jsoniter.Marshal(message)
