@@ -20,6 +20,8 @@ package models
 
 import (
 	"time"
+
+	"github.com/panther-labs/panther/internal/compliance/snapshotlogs"
 )
 
 // SourceIntegration represents a Panther integration with a source.
@@ -63,16 +65,15 @@ type SourceIntegrationMetadata struct {
 	SqsConfig          *SqsConfig `json:"sqsConfig,omitempty"`
 }
 
-const (
-	resourceSnapshotLogType   = "Snapshot.ResourceHistory"
-	complianceSnapshotLogType = "Snapshot.ComplianceHistory"
-)
-
 func (info *SourceIntegration) RequiredLogTypes() (logTypes []string) {
 	// We use a switch to avoid git conflicts with enterprise
 	switch {
 	case info.IntegrationType == IntegrationTypeAWSScan:
-		return []string{resourceSnapshotLogType, complianceSnapshotLogType}
+		var out []string
+		for _, entry := range snapshotlogs.CloudSecurityLogTypes().Entries() {
+			out = append(out, entry.Name())
+		}
+		return out
 	case info.SqsConfig != nil:
 		return info.SqsConfig.LogTypes
 	default:

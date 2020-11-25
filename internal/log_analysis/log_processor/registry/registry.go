@@ -31,11 +31,11 @@ var (
 	nativeLogTypes logtypes.Group
 )
 
-// NativeLogTypesResolver returns a resolver for native log types.
-// Use this instead of registry.Default()
-func NativeLogTypesResolver() logtypes.Resolver {
-	return logtypes.LocalResolver(nativeLogTypes)
-}
 func NativeLogTypes() logtypes.Group {
 	return nativeLogTypes
+}
+
+// NativeLogTypesResolver returns a resolver for native log types.
+func NativeLogTypesResolver() logtypes.Resolver {
+	return logtypes.LocalResolver(nativeLogTypes)
 }

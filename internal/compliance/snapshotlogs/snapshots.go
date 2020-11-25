@@ -20,8 +20,6 @@ package snapshotlogs
 
 import (
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/logtypes"
-	// FIXME: remove this once synced with master
-	_ "github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers/awslogs"
 )
 
 // LogTypes exports the available log type entries
@@ -30,4 +28,12 @@ func LogTypes() logtypes.Group {
 }
 
 // nolint:lll
-var logTypes = logtypes.Must("SnapshotHistory", logTypeCompliance, logTypeResource)
+var logTypes = logtypes.Must("cloudsecurity", logTypeCompliance, logTypeResource)
+
+func CloudSecurityLogTypeResolver() logtypes.Resolver {
+	return logtypes.LocalResolver(logTypes)
+}
+
+func CloudSecurityLogTypes() logtypes.Group {
+	return logTypes
+}

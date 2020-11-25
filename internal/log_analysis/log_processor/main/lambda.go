@@ -26,7 +26,9 @@ import (
 	"github.com/aws/aws-lambda-go/lambdacontext"
 	"go.uber.org/zap"
 
+	"github.com/panther-labs/panther/internal/compliance/snapshotlogs"
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/common"
+	"github.com/panther-labs/panther/internal/log_analysis/log_processor/logtypes"
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/processor"
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/registry"
 	"github.com/panther-labs/panther/pkg/lambdalogger"
@@ -60,7 +62,10 @@ func process(ctx context.Context, scalingDecisionInterval time.Duration) (err er
 		operation.Stop().Log(err, zap.Int("sqsMessageCount", sqsMessageCount))
 	}()
 
-	logTypesResolver := registry.NativeLogTypesResolver()
+	logTypesResolver := logtypes.ChainResolvers(
+		registry.NativeLogTypesResolver(),
+		snapshotlogs.CloudSecurityLogTypeResolver(),
+	)
 
 	sqsMessageCount, err = processor.PollEvents(ctx, common.SqsClient, logTypesResolver)
 
